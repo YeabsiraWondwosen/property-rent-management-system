@@ -8,6 +8,12 @@ const propertySchema = new mongoose.Schema(
       trim: true,
     },
 
+    images: [
+  {
+    type: String,
+  },
+],
+
     description: {
       type: String,
       required: true,

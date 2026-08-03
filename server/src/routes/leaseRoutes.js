@@ -1,54 +1,61 @@
 import express from "express";
 
 import {
-  createProperty,
-  getProperties,
-  getPropertyById,
-  updateProperty,
-  deleteProperty,
-} from "../controllers/propertyController.js";
+  createLease,
+  getLeases,
+  getLeaseById,
+  updateLease,
+  deleteLease,
+} from "../controllers/leaseController.js";
 
 import {
   protect,
   authorize,
 } from "../middleware/authMiddleware.js";
 
-import upload from "../middleware/uploadMiddleware.js";
-
 import validate from "../middleware/validationMiddleware.js";
 
 import {
-  propertyValidator,
-} from "../validators/propertyValidator.js";
+  leaseValidator,
+} from "../validators/leaseValidator.js";
 
 const router = express.Router();
-
-router.get("/", getProperties);
-
-router.get("/:id", getPropertyById);
 
 router.post(
   "/",
   protect,
   authorize("admin", "owner"),
-  upload.array("images", 5),
-  propertyValidator,
+  leaseValidator,
   validate,
-  createProperty
+  createLease
+);
+
+router.get(
+  "/",
+  protect,
+  authorize("admin", "owner", "tenant"),
+  getLeases
+);
+
+router.get(
+  "/:id",
+  protect,
+  authorize("admin", "owner", "tenant"),
+  getLeaseById
 );
 
 router.put(
   "/:id",
   protect,
   authorize("admin", "owner"),
-  updateProperty
+  updateLease
 );
 
 router.delete(
   "/:id",
   protect,
   authorize("admin", "owner"),
-  deleteProperty
+  deleteLease
 );
 
 export default router;

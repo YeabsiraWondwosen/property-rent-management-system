@@ -1,54 +1,61 @@
 import express from "express";
 
 import {
-  createProperty,
-  getProperties,
-  getPropertyById,
-  updateProperty,
-  deleteProperty,
-} from "../controllers/propertyController.js";
+  createPayment,
+  getPayments,
+  getPaymentById,
+  updatePayment,
+  deletePayment,
+} from "../controllers/paymentController.js";
 
 import {
   protect,
   authorize,
 } from "../middleware/authMiddleware.js";
 
-import upload from "../middleware/uploadMiddleware.js";
-
 import validate from "../middleware/validationMiddleware.js";
 
 import {
-  propertyValidator,
-} from "../validators/propertyValidator.js";
+  paymentValidator,
+} from "../validators/paymentValidator.js";
 
 const router = express.Router();
-
-router.get("/", getProperties);
-
-router.get("/:id", getPropertyById);
 
 router.post(
   "/",
   protect,
   authorize("admin", "owner"),
-  upload.array("images", 5),
-  propertyValidator,
+  paymentValidator,
   validate,
-  createProperty
+  createPayment
+);
+
+router.get(
+  "/",
+  protect,
+  authorize("admin", "owner", "tenant"),
+  getPayments
+);
+
+router.get(
+  "/:id",
+  protect,
+  authorize("admin", "owner", "tenant"),
+  getPaymentById
 );
 
 router.put(
   "/:id",
   protect,
   authorize("admin", "owner"),
-  updateProperty
+  updatePayment
 );
 
 router.delete(
   "/:id",
   protect,
   authorize("admin", "owner"),
-  deleteProperty
+  deletePayment
 );
 
 export default router;
