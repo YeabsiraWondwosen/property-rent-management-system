@@ -4,13 +4,11 @@ import User from "../models/User.js";
 
 /**
  * Register User
- * POST /api/auth/register
  */
 export const register = async (req, res) => {
   try {
     const { fullName, email, password, phone, role } = req.body;
 
-    // Validate input
     if (!fullName || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -18,7 +16,6 @@ export const register = async (req, res) => {
       });
     }
 
-    // Check if email already exists
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -28,10 +25,8 @@ export const register = async (req, res) => {
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await User.create({
       fullName,
       email,
@@ -60,13 +55,11 @@ export const register = async (req, res) => {
 
 /**
  * Login User
- * POST /api/auth/login
  */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -74,7 +67,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // Find user
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -84,7 +76,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // Compare passwords
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
@@ -94,7 +85,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       {
         id: user._id,
@@ -123,4 +113,14 @@ export const login = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+/**
+ * Get Current Logged-in User
+ */
+export const getProfile = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
 };
